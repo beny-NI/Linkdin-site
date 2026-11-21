@@ -55,3 +55,9 @@ server.log
 # Local runtime files
 .zscripts/*.pid
 db/*.db
+
+# Local runtime and temporary files
+.zscripts/*.pid
+db/*.db
+/tool-results/
+/upload/
