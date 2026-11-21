@@ -1,0 +1,1277 @@
+     1→# SkilledSphere
+     2→## Global Professional Discovery & Editorial Platform
+     3→### Complete Product, Design & Technical Implementation Specification
+     4→
+     5→---
+     6→
+     7→# 1. Project Vision
+     8→
+     9→Design and develop a premium, modern, international web platform called **SkilledSphere**.
+    10→
+    11→SkilledSphere is a global professional discovery and editorial platform designed to introduce exceptional professionals, industry experts, researchers, entrepreneurs, executives, founders, and leaders across different industries.
+    12→
+    13→The platform combines three major concepts:
+    14→
+    15→1. **Professional Discovery:** Helping companies, organizations, investors, and individuals discover professionals based on expertise, industry, achievements, and geographic location.
+    16→2. **Editorial Media:** Publishing professionally curated profiles, interviews, success stories, leadership features, and industry-related content.
+    17→3. **Professional Networking:** Creating opportunities for professionals and organizations to discover each other and establish meaningful business connections.
+    18→
+    19→### Core Product Positioning
+    20→
+    21→SkilledSphere is NOT a LinkedIn clone.
+    22→
+    23→It is not intended to be a social network based on daily posts, likes, comments, follower counts, or connection metrics.
+    24→
+    25→Instead, position it as a curated global professional discovery platform with a premium editorial identity.
+    26→
+    27→**Core Brand Message:**
+    28→
+    29→"Discover the People Shaping What's Next."
+    30→
+    31→The primary audience includes technology professionals, business leaders, researchers, entrepreneurs, engineers, creative professionals, medical specialists, and other recognized experts.
+    32→
+    33→The platform must be international from the beginning, with English as its primary language and an architecture that supports additional languages in the future.
+    34→
+    35→---
+    36→
+    37→# 2. Brand Identity & Visual Direction
+    38→
+    39→Create a distinctive visual identity combining:
+    40→
+    41→- Bold Technology
+    42→- Luxury Corporate Design
+    43→- Modern Editorial Design
+    44→- Premium Professional Media
+    45→
+    46→The website should feel innovative, prestigious, international, sophisticated, and trustworthy.
+    47→
+    48→Avoid generic SaaS templates, traditional magazine layouts, excessive gradients, conventional social network interfaces, and unnecessary decorative elements.
+    49→
+    50→## Color System
+    51→
+    52→Primary brand color: Navy Blue.
+    53→
+    54→Use the following palette:
+    55→
+    56→- Midnight Navy: #0B1530
+    57→- Royal Navy: #172747
+    58→- Deep Blue: #263B60
+    59→- Champagne Gold: #C6A96B
+    60→- Warm White: #F5F3EE
+    61→- Pure Black: #090B10
+    62→
+    63→Color guidelines:
+    64→
+    65→- Navy dominates the brand identity and major interface elements.
+    66→- Black is used for selected immersive and cinematic sections.
+    67→- White and warm off-white provide contrast and readability.
+    68→- Gold is used sparingly for premium highlights, borders, selected labels, and important interactive details.
+    69→- Develop lighter and darker shades of the selected colors for visual depth.
+    70→
+    71→Avoid excessive gold surfaces.
+    72→
+    73→The result should feel luxurious without resembling a traditional banking or hospitality website.
+    74→
+    75→## Typography
+    76→
+    77→Use modern, highly readable typography.
+    78→
+    79→Recommended:
+    80→- Headings: Manrope or Plus Jakarta Sans.
+    81→- Body: Inter.
+    82→
+    83→Use expressive headlines, clear hierarchy, carefully controlled letter spacing, and editorial typography.
+    84→
+    85→## UI Principles
+    86→
+    87→- Clean layouts with generous whitespace.
+    88→- Strong visual hierarchy.
+    89→- High-quality professional portraits.
+    90→- Subtle borders and elegant shadows.
+    91→- Smooth transitions and carefully designed hover states.
+    92→- Consistent spacing and component systems.
+    93→- Fully responsive design.
+    94→
+    95→---
+    96→
+    97→# 3. Technical Architecture & Technology Stack
+    98→
+    99→Use a modern TypeScript-based architecture.
+   100→
+   101→The recommended stack is:
+   102→
+   103→| Layer | Technology |
+   104→|---|---|
+   105→| Main Framework | Next.js |
+   106→| UI Library | React |
+   107→| Programming Language | TypeScript |
+   108→| Styling | Tailwind CSS |
+   109→| UI Components | shadcn/ui |
+   110→| 3D Engine | Three.js |
+   111→| React 3D Integration | React Three Fiber |
+   112→| 3D Utilities | @react-three/drei |
+   113→| UI Animations | Framer Motion |
+   114→| Scroll Animations | GSAP + ScrollTrigger |
+   115→| CMS & Admin | Payload CMS |
+   116→| Database | PostgreSQL |
+   117→| Geospatial Extension | PostGIS, when required |
+   118→| Initial Search | PostgreSQL Full-Text Search |
+   119→| Advanced Search | Meilisearch, when required |
+   120→| Media Storage | Cloudflare R2 |
+   121→| CDN | Cloudflare CDN |
+   122→| Deployment | Vercel or suitable managed infrastructure |
+   123→
+   124→## Architectural Approach
+   125→
+   126→Use a **Modular Monolith** architecture.
+   127→
+   128→Do not introduce microservices, Kubernetes, or unnecessary infrastructure complexity in the initial implementation.
+   129→
+   130→The system should be modular, maintainable, and capable of evolving as the platform grows.
+   131→
+   132→Keep business logic, data access, API functionality, and presentation components logically separated.
+   133→
+   134→### Next.js
+   135→
+   136→Use Next.js App Router.
+   137→
+   138→Requirements:
+   139→
+   140→- Server-side rendering where appropriate.
+   141→- Static generation for suitable editorial content.
+   142→- Dynamic rendering for frequently updated content.
+   143→- SEO-friendly public pages.
+   144→- Dynamic professional profile routes.
+   145→- Optimized image delivery.
+   146→- API integration.
+   147→- Proper loading and error states.
+   148→
+   149→Use server components by default and client components only where interactivity is required.
+   150→
+   151→### Payload CMS
+   152→
+   153→Use Payload CMS as the primary content management system.
+   154→
+   155→Integrate Payload with the Next.js application.
+   156→
+   157→Payload must manage:
+   158→
+   159→- Professional profiles.
+   160→- Expertise categories.
+   161→- Industries.
+   162→- Countries.
+   163→- Professional collections.
+   164→- Editorial stories.
+   165→- Featured-professional schedules.
+   166→- User-submitted applications.
+   167→- Media assets.
+   168→- Administrative roles and permissions.
+   169→
+   170→Use Payload's PostgreSQL adapter.
+   171→
+   172→Build reusable collections, relationships, validation rules, access controls, and administrative workflows.
+   173→
+   174→The administration interface should be suitable for non-technical editorial staff.
+   175→
+   176→Do not build a separate administration frontend unless there is a clear requirement.
+   177→
+   178→### PostgreSQL
+   179→
+   180→Use PostgreSQL as the primary database.
+   181→
+   182→Design normalized and maintainable data relationships.
+   183→
+   184→Recommended main entities:
+   185→
+   186→- Users
+   187→- Professionals
+   188→- Countries
+   189→- Cities
+   190→- ExpertiseCategories
+   191→- Industries
+   192→- Collections
+   193→- CollectionMembers
+   194→- Stories
+   195→- FeaturedSchedules
+   196→- FeaturedApplications
+   197→- MediaAssets
+   198→
+   199→Support many-to-many relationships where professionals belong to multiple expertise categories, industries, or collections.
+   200→
+   201→Use stable identifiers and appropriate indexing.
+   202→
+   203→### Geospatial Data
+   204→
+   205→Support geographic information for professionals.
+   206→
+   207→Recommended fields:
+   208→
+   209→- Country code.
+   210→- Country name.
+   211→- City.
+   212→- Region.
+   213→- Latitude.
+   214→- Longitude.
+   215→
+   216→PostGIS can be introduced for advanced geographic queries, regional searches, and proximity-based discovery.
+   217→
+   218→Do not make PostGIS a mandatory dependency for simple country-level filtering.
+   219→
+   220→The globe must consume structured geographic data rather than hardcoded frontend information.
+   221→
+   222→### Search
+   223→
+   224→Initially use PostgreSQL Full-Text Search and indexed database queries.
+   225→
+   226→Search should cover:
+   227→
+   228→- Professional names.
+   229→- Professional titles.
+   230→- Expertise.
+   231→- Industries.
+   232→- Countries.
+   233→- Collections.
+   234→- Editorial stories.
+   235→
+   236→Keep the search architecture extensible so Meilisearch can be integrated later without redesigning the entire search experience.
+   237→
+   238→### Media Storage
+   239→
+   240→Use Cloudflare R2 for professional portraits, article images, and other uploaded media.
+   241→
+   242→Implement optimized image delivery, suitable formats, responsive image sizes, and CDN caching.
+   243→
+   244→Never store large media files directly inside the relational database.
+   245→
+   246→### ORM & Data Access
+   247→
+   248→Use Payload's database integration as the primary data-access layer.
+   249→
+   250→Avoid adding Prisma or another ORM unnecessarily.
+   251→
+   252→If independent application modules eventually require direct database access, introduce an additional data-access layer only when justified.
+   253→
+   254→---
+   255→
+   256→# 4. Main Website Architecture
+   257→
+   258→Create the following public pages:
+   259→
+   260→1. Homepage
+   261→2. Discover Professionals
+   262→3. Expertise Directory
+   263→4. Industry Directory
+   264→5. Professional Collections
+   265→6. Stories & Magazine
+   266→7. Individual Professional Profile
+   267→8. About SkilledSphere
+   268→9. Get Featured
+   269→10. Contact
+   270→
+   271→Use consistent navigation throughout the website.
+   272→
+   273→## Main Navigation
+   274→
+   275→Include:
+   276→
+   277→- SkilledSphere logo.
+   278→- Discover
+   279→- Expertise
+   280→- Industries
+   281→- Collections
+   282→- Magazine
+   283→- Global Search
+   284→- Get Featured CTA.
+   285→
+   286→The header should be elegant and relatively minimal.
+   287→
+   288→The search experience must support searching for professionals, expertise, industries, collections, and editorial stories.
+   289→
+   290→Use a sticky or intelligently transitioning header where appropriate.
+   291→
+   292→---
+   293→
+   294→# 5. Homepage — Main Experience
+   295→
+   296→The homepage is the most important part of the project.
+   297→
+   298→Its design should be immersive, visually distinctive, and interaction-driven.
+   299→
+   300→Structure the homepage as a sequence of visually connected sections.
+   301→
+   302→## Section 1: Hero — Featured Professional
+   303→
+   304→Create a large, premium featured-professional card as the first visual focal point.
+   305→
+   306→The card should resemble a high-end editorial feature rather than a conventional advertisement.
+   307→
+   308→Include:
+   309→
+   310→- Professional portrait.
+   311→- Full name.
+   312→- Professional title.
+   313→- Short biography or career summary.
+   314→- Main expertise.
+   315→- Industry.
+   316→- Country or location.
+   317→- Selected achievements.
+   318→- View Profile button.
+   319→- Featured Professional or Person of the Day label.
+   320→
+   321→The featured professional must be dynamically selected by an administrator.
+   322→
+   323→Administrators should be able to:
+   324→
+   325→- Select a professional for a specific date.
+   326→- Schedule future featured professionals.
+   327→- Change or remove the currently featured person.
+   328→- Preview the featured card before publishing.
+   329→
+   330→Support a daily rotation system.
+   331→
+   332→Do not hardcode the featured professional in frontend components.
+   333→
+   334→Use realistic sample data for the initial prototype.
+   335→
+   336→## Section 2: Interactive 3D Global Globe
+   337→
+   338→Create a large, realistic, interactive 3D globe as the central visual identity of the homepage.
+   339→
+   340→Initially, position the globe behind and slightly to the left of the featured-professional card.
+   341→
+   342→### Globe Visual Design
+   343→
+   344→Match the SkilledSphere visual identity.
+   345→
+   346→Use:
+   347→
+   348→- Dark navy and deep blue oceans.
+   349→- Subtle country boundaries.
+   350→- Elegant geographic outlines.
+   351→- Carefully selected gold highlights.
+   352→- Subtle illuminated geographic markers.
+   353→- Soft atmospheric lighting.
+   354→- Sophisticated dark surroundings.
+   355→
+   356→Avoid cartoon-like earth graphics and excessive neon effects.
+   357→
+   358→The globe should rotate slowly and continuously when idle.
+   359→
+   360→Its movement should feel calm, elegant, and cinematic.
+   361→
+   362→### Scroll-Driven Globe Transition
+   363→
+   364→This is a critical interaction.
+   365→
+   366→Implement a coordinated scroll-based transition between the featured-professional hero and the global discovery experience.
+   367→
+   368→Initial state:
+   369→
+   370→- Featured card is prominent.
+   371→- Globe is positioned behind the card.
+   372→- Globe rotates slowly.
+   373→
+   374→As the user scrolls:
+   375→
+   376→1. The featured card gradually scales down.
+   377→2. The card moves backward visually and fades away.
+   378→3. The globe gradually increases in size.
+   379→4. The globe moves into the foreground.
+   380→5. The globe becomes the dominant visual element.
+   381→6. The transition feels continuous and cinematic.
+   382→
+   383→Avoid excessive animation or interactions that make scrolling uncomfortable.
+   384→
+   385→Once the transition completes, the globe becomes fully interactive.
+   386→
+   387→### Interactive Country Selection
+   388→
+   389→Users must be able to interact directly with the globe.
+   390→
+   391→Required interactions:
+   392→
+   393→- Rotate the globe using mouse drag or touch gestures.
+   394→- Zoom in and out where appropriate.
+   395→- Click or tap a country.
+   396→- Highlight the selected country.
+   397→- Rotate the globe toward a selected country.
+   398→- Display a country-specific professional discovery panel.
+   399→
+   400→When a country is selected, open a floating panel on the RIGHT side of the globe.
+   401→
+   402→The panel should contain:
+   403→
+   404→- Country name and flag.
+   405→- Number of listed professionals.
+   406→- Featured professionals from that country.
+   407→- Professional portraits.
+   408→- Names and professional titles.
+   409→- Main expertise tags.
+   410→- Short descriptions.
+   411→- Links to individual profiles.
+   412→- View All Professionals action.
+   413→
+   414→The panel must feel visually integrated with the globe environment.
+   415→
+   416→Do not make it look like a generic dashboard.
+   417→
+   418→### Geographic Data Management
+   419→
+   420→The globe must connect to structured professional data.
+   421→
+   422→Each professional record must contain geographic information.
+   423→
+   424→When an administrator adds a new professional and assigns a country, that professional should automatically appear in the corresponding geographic discovery results.
+   425→
+   426→Do not require manual editing of the 3D globe whenever a professional is added.
+   427→
+   428→Countries without listed professionals should remain selectable and display an elegant empty state.
+   429→
+   430→Use real geographic boundaries and country identifiers.
+   431→
+   432→### Country Navigation Ticker
+   433→
+   434→Directly below the globe section, create an elegant horizontal country navigation ticker.
+   435→
+   436→Example:
+   437→
+   438→United States · United Kingdom · Germany · France · Canada · Japan · Singapore · Australia · Switzerland
+   439→
+   440→When users click a country:
+   441→
+   442→- The globe smoothly rotates toward that country.
+   443→- The selected country becomes highlighted.
+   444→- The professional panel opens.
+   445→- The country ticker reflects the active selection.
+   446→
+   447→Support manual horizontal scrolling.
+   448→
+   449→The ticker should feel like part of the visual experience rather than a conventional navigation menu.
+   450→
+   451→### Leaving the Globe Section
+   452→
+   453→As the user continues scrolling:
+   454→
+   455→- The globe gradually scales down.
+   456→- It moves backward and fades away.
+   457→- The country ticker disappears.
+   458→- The next homepage section enters naturally.
+   459→
+   460→Use coordinated scroll animations.
+   461→
+   462→The globe must not remain fixed indefinitely or interfere with subsequent sections.
+   463→
+   464→---
+   465→
+   466→# 6. Homepage — Expertise Discovery
+   467→
+   468→After the globe experience, introduce the expertise discovery section.
+   469→
+   470→Use an expressive visual layout rather than a basic grid of generic cards.
+   471→
+   472→### Example Expertise Clusters
+   473→
+   474→Technology:
+   475→- Artificial Intelligence
+   476→- Machine Learning
+   477→- Computer Vision
+   478→- Data Science
+   479→- Software Engineering
+   480→- Cybersecurity
+   481→
+   482→Business:
+   483→- Entrepreneurship
+   484→- Business Strategy
+   485→- Executive Leadership
+   486→- Venture Capital
+   487→- Management
+   488→
+   489→Science & Research:
+   490→- Biomedical Engineering
+   491→- Biotechnology
+   492→- Scientific Research
+   493→- Medical Innovation
+   494→
+   495→Creative:
+   496→- Product Design
+   497→- UX/UI Design
+   498→- Architecture
+   499→- Digital Creativity
+   500→
+   501→Finance:
+   502→- Investment
+   503→- Financial Analysis
+   504→- Economics
+   505→- Fintech
+   506→
+   507→Categories must be configurable and expandable.
+   508→
+   509→### Expertise Interaction
+   510→
+   511→When users click an expertise category, navigate to a dedicated expertise page.
+   512→
+   513→Include:
+   514→
+   515→- Expertise title.
+   516→- Description.
+   517→- Related sub-specialties.
+   518→- Featured professionals.
+   519→- All relevant professionals.
+   520→- Related industries.
+   521→- Related editorial stories.
+   522→
+   523→Include relevant filters for location, industry, and other professional attributes.
+   524→
+   525→Support hierarchical expertise relationships.
+   526→
+   527→For example:
+   528→
+   529→Artificial Intelligence:
+   530→- Machine Learning
+   531→- Deep Learning
+   532→- Computer Vision
+   533→- Natural Language Processing
+   534→- Generative AI
+   535→
+   536→Professionals may belong to multiple expertise categories.
+   537→
+   538→---
+   539→
+   540→# 7. Industry Discovery
+   541→
+   542→Create a dedicated industry exploration section.
+   543→
+   544→Possible categories:
+   545→
+   546→- Technology
+   547→- Healthcare
+   548→- Finance
+   549→- Education
+   550→- Engineering
+   551→- Energy
+   552→- Manufacturing
+   553→- Media
+   554→- Science
+   555→- Consulting
+   556→- Architecture
+   557→- Entrepreneurship
+   558→
+   559→Users should be able to explore professionals by industry.
+   560→
+   561→Each industry should have a dedicated landing page with relevant professionals, featured stories, and expertise clusters.
+   562→
+   563→---
+   564→
+   565→# 8. Curated Collections
+   566→
+   567→Create a premium editorial section for selected groups of professionals.
+   568→
+   569→Example collections:
+   570→
+   571→- 30 Under 30
+   572→- 40 Under 40
+   573→- Global AI Leaders
+   574→- Women in Leadership
+   575→- Emerging Innovators
+   576→- Next Generation Founders
+   577→- Global Technology Pioneers
+   578→- Influential Researchers
+   579→
+   580→Each collection should have:
+   581→
+   582→- Unique title.
+   583→- Editorial description.
+   584→- Cover image or visual identity.
+   585→- Featured individuals.
+   586→- Dedicated collection page.
+   587→
+   588→Collections must be manageable through Payload CMS.
+   589→
+   590→Avoid presenting every collection as a generic ranking.
+   591→
+   592→Some collections should be curated editorial selections rather than numerical rankings.
+   593→
+   594→---
+   595→
+   596→# 9. Stories & Magazine
+   597→
+   598→Create a modern editorial media section.
+   599→
+   600→Include:
+   601→
+   602→- Interviews.
+   603→- Professional journeys.
+   604→- Leadership stories.
+   605→- Industry insights.
+   606→- Success stories.
+   607→- Research and innovation features.
+   608→- Career achievements.
+   609→
+   610→The visual design should be inspired by premium digital editorial publications but must have a unique SkilledSphere identity.
+   611→
+   612→Use:
+   613→
+   614→- Large editorial imagery.
+   615→- Strong typography.
+   616→- Asymmetric content grids.
+   617→- Featured articles.
+   618→- Carefully designed article previews.
+   619→
+   620→The magazine must connect directly to professional profiles.
+   621→
+   622→Every relevant story should link to its corresponding person's profile.
+   623→
+   624→### Individual Article Pages
+   625→
+   626→Support:
+   627→
+   628→- Title and subtitle.
+   629→- Cover image.
+   630→- Author.
+   631→- Publication date.
+   632→- Reading time.
+   633→- Article content.
+   634→- Related professionals.
+   635→- Related expertise.
+   636→- Related stories.
+   637→
+   638→---
+   639→
+   640→# 10. Individual Professional Profile
+   641→
+   642→Every professional must have a dedicated, shareable public profile page.
+   643→
+   644→The profile should combine the elegance of an editorial feature with the structure of a professional portfolio.
+   645→
+   646→Avoid copying LinkedIn's profile layout.
+   647→
+   648→### Profile Header
+   649→
+   650→Include:
+   651→
+   652→- Medium-sized professional portrait.
+   653→- Full name.
+   654→- Professional title.
+   655→- Short professional introduction.
+   656→- Country and location.
+   657→- Main expertise.
+   658→- Optional professional organization.
+   659→- Social and professional links.
+   660→- Contact or collaboration CTA.
+   661→
+   662→### Profile Content
+   663→
+   664→Include the following sections where applicable:
+   665→
+   666→1. Professional Overview
+   667→2. Career Journey
+   668→3. Areas of Expertise
+   669→4. Key Achievements
+   670→5. Professional Experience
+   671→6. Education
+   672→7. Selected Projects
+   673→8. Research & Publications
+   674→9. Awards & Recognition
+   675→10. Featured Interviews and Articles
+   676→11. Related Professionals
+   677→
+   678→The profile should not look like a traditional CV.
+   679→
+   680→Use editorial layouts, structured information blocks, and carefully selected visual highlights.
+   681→
+   682→Not every section is mandatory. Display only available information.
+   683→
+   684→### Profile Connectivity
+   685→
+   686→Include links to:
+   687→
+   688→- LinkedIn.
+   689→- Personal website.
+   690→- Portfolio.
+   691→- Research profiles.
+   692→- Other relevant professional platforms.
+   693→
+   694→The goal is to help visitors understand the person's professional identity and discover opportunities to connect.
+   695→
+   696→---
+   697→
+   698→# 11. Discover Professionals Page
+   699→
+   700→Create a dedicated global professional directory.
+   701→
+   702→Include:
+   703→
+   704→- Search by name.
+   705→- Search by professional title.
+   706→- Search by expertise.
+   707→- Search by industry.
+   708→- Filter by country.
+   709→- Filter by professional category.
+   710→- Filter by achievements.
+   711→- Sort by relevant discovery criteria.
+   712→
+   713→Display professionals using high-quality profile cards.
+   714→
+   715→Each card should contain:
+   716→
+   717→- Portrait.
+   718→- Name.
+   719→- Professional title.
+   720→- Country.
+   721→- Primary expertise.
+   722→- Short introduction.
+   723→- View Profile action.
+   724→
+   725→Use pagination or efficient progressive loading.
+   726→
+   727→Do not introduce social engagement features such as likes, follower counts, or public activity feeds.
+   728→
+   729→---
+   730→
+   731→# 12. Global Search Experience
+   732→
+   733→Implement a global search experience accessible from the main navigation.
+   734→
+   735→Search must support:
+   736→
+   737→- Professionals.
+   738→- Expertise.
+   739→- Industries.
+   740→- Collections.
+   741→- Editorial stories.
+   742→
+   743→Provide categorized search results.
+   744→
+   745→Use an elegant autocomplete interface.
+   746→
+   747→Support loading states, empty states, and no-result states.
+   748→
+   749→Initially use PostgreSQL Full-Text Search.
+   750→
+   751→Keep the architecture ready for future Meilisearch integration.
+   752→
+   753→---
+   754→
+   755→# 13. Get Featured
+   756→
+   757→Create a dedicated page for professionals who want to be introduced on SkilledSphere.
+   758→
+   759→Explain the editorial selection and review process.
+   760→
+   761→Provide a structured submission form with:
+   762→
+   763→- Full name.
+   764→- Professional title.
+   765→- Email.
+   766→- Country.
+   767→- Industry.
+   768→- Areas of expertise.
+   769→- Professional biography.
+   770→- LinkedIn URL.
+   771→- Personal website.
+   772→- Profile photo.
+   773→- Selected achievements.
+   774→- Supporting links.
+   775→
+   776→Submissions must enter an administrative review workflow.
+   777→
+   778→Submitting a request must not automatically publish a public profile.
+   779→
+   780→The editorial team must approve and manage submissions.
+   781→
+   782→---
+   783→
+   784→# 14. Payload CMS — Administrative Management
+   785→
+   786→Use Payload CMS as the central content management system.
+   787→
+   788→The administration system must support the following modules.
+   789→
+   790→### Professional Management
+   791→
+   792→- Add professionals.
+   793→- Edit professional information.
+   794→- Upload and manage portraits.
+   795→- Assign expertise categories.
+   796→- Assign industries.
+   797→- Assign countries and locations.
+   798→- Publish or unpublish profiles.
+   799→- Manage professional links.
+   800→- Associate professionals with editorial stories.
+   801→- Preview public profiles.
+   802→
+   803→### Daily Featured Professional
+   804→
+   805→- Select the featured professional.
+   806→- Schedule featured dates.
+   807→- Preview the homepage card.
+   808→- Manage upcoming featured profiles.
+   809→- Prevent conflicting active schedules.
+   810→
+   811→### Geographic Management
+   812→
+   813→- Manage countries and geographic information.
+   814→- Associate professionals with locations.
+   815→- Automatically update country-level professional listings.
+   816→
+   817→### Expertise Management
+   818→
+   819→- Create expertise categories.
+   820→- Create subcategories.
+   821→- Manage hierarchical relationships.
+   822→- Assign multiple categories to professionals.
+   823→
+   824→### Editorial Management
+   825→
+   826→- Create and edit articles.
+   827→- Manage collections.
+   828→- Feature selected stories.
+   829→- Manage publication dates.
+   830→- Review Get Featured submissions.
+   831→
+   832→### Roles & Permissions
+   833→
+   834→Implement role-based access control.
+   835→
+   836→Recommended roles:
+   837→
+   838→- Administrator.
+   839→- Editor.
+   840→- Content Manager.
+   841→- Reviewer.
+   842→
+   843→Editors should be able to manage content without unrestricted access to system configuration.
+   844→
+   845→Use Payload access controls and validation.
+   846→
+   847→---
+   848→
+   849→# 15. Footer
+   850→
+   851→Design a sophisticated, professional footer.
+   852→
+   853→Include:
+   854→
+   855→- SkilledSphere logo.
+   856→- Short brand description.
+   857→- Discover Professionals.
+   858→- Expertise.
+   859→- Industries.
+   860→- Collections.
+   861→- Magazine.
+   862→- About Us.
+   863→- Get Featured.
+   864→- Contact.
+   865→- LinkedIn and other social links.
+   866→- Privacy Policy.
+   867→- Terms of Service.
+   868→- Copyright information.
+   869→
+   870→Use a dark navy or black background with restrained gold details.
+   871→
+   872→The footer should feel premium and complete without becoming visually crowded.
+   873→
+   874→---
+   875→
+   876→# 16. Motion & Interaction Design
+   877→
+   878→Motion is an important part of the SkilledSphere experience.
+   879→
+   880→Use carefully controlled animations:
+   881→
+   882→- Slow continuous globe rotation.
+   883→- Scroll-driven globe transformation.
+   884→- Smooth country-selection camera movement.
+   885→- Elegant panel transitions.
+   886→- Subtle card hover interactions.
+   887→- Image transitions.
+   888→- Smooth navigation transitions.
+   889→- Refined loading states.
+   890→
+   891→### Animation Responsibilities
+   892→
+   893→Use:
+   894→
+   895→**GSAP + ScrollTrigger**
+   896→- Scroll-based globe transitions.
+   897→- Featured card transformations.
+   898→- Pinned sections where appropriate.
+   899→- Coordinated multi-element scroll timelines.
+   900→
+   901→**Framer Motion**
+   902→- UI component transitions.
+   903→- Card interactions.
+   904→- Modal and panel transitions.
+   905→- Navigation animations.
+   906→- Micro-interactions.
+   907→
+   908→**Three.js / React Three Fiber**
+   909→- Globe rotation.
+   910→- Camera positioning.
+   911→- Geographic visualization.
+   912→- Lighting and materials.
+   913→- Interactive country selection.
+   914→
+   915→Do not let GSAP and Framer Motion simultaneously control the same animated properties of an element.
+   916→
+   917→Avoid unnecessary animations.
+   918→
+   919→Respect reduced-motion preferences.
+   920→
+   921→Provide a graceful static or simplified globe fallback when WebGL is unavailable.
+   922→
+   923→---
+   924→
+   925→# 17. Data Architecture & Relationships
+   926→
+   927→Design structured data models for:
+   928→
+   929→### Professionals
+   930→
+   931→Recommended fields:
+   932→
+   933→- id
+   934→- slug
+   935→- fullName
+   936→- professionalTitle
+   937→- biography
+   938→- portrait
+   939→- country
+   940→- city
+   941→- location
+   942→- expertise
+   943→- industries
+   944→- achievements
+   945→- experience
+   946→- education
+   947→- projects
+   948→- publications
+   949→- awards
+   950→- professionalLinks
+   951→- featuredStories
+   952→- publicationStatus
+   953→- createdAt
+   954→- updatedAt
+   955→
+   956→### Countries
+   957→
+   958→- id
+   959→- name
+   960→- ISO country code
+   961→- flag
+   962→- geographic identifiers
+   963→- professional relationships
+   964→
+   965→### Expertise Categories
+   966→
+   967→- id
+   968→- name
+   969→- slug
+   970→- description
+   971→- parentCategory
+   972→- childCategories
+   973→- relatedProfessionals
+   974→
+   975→### Industries
+   976→
+   977→- id
+   978→- name
+   979→- slug
+   980→- description
+   981→- relatedProfessionals
+   982→
+   983→### Collections
+   984→
+   985→- id
+   986→- title
+   987→- slug
+   988→- description
+   989→- coverImage
+   990→- members
+   991→- publicationStatus
+   992→
+   993→### Stories
+   994→
+   995→- id
+   996→- title
+   997→- slug
+   998→- subtitle
+   999→- coverImage
+  1000→- author
+  1001→- content
+  1002→- relatedProfessionals
+  1003→- relatedExpertise
+  1004→- publicationDate
+  1005→- publicationStatus
+  1006→
+  1007→### Featured Schedules
+  1008→
+  1009→- id
+  1010→- professional
+  1011→- startDate
+  1012→- endDate
+  1013→- status
+  1014→
+  1015→### Featured Applications
+  1016→
+  1017→- id
+  1018→- applicantInformation
+  1019→- submissionDate
+  1020→- reviewStatus
+  1021→- reviewer
+  1022→- editorialNotes
+  1023→
+  1024→Use appropriate relationships rather than duplicating entire professional records across collections and stories.
+  1025→
+  1026→Validate input and enforce publication rules.
+  1027→
+  1028→---
+  1029→
+  1030→# 18. Responsive Design
+  1031→
+  1032→Provide a fully responsive experience for:
+  1033→
+  1034→- Desktop.
+  1035→- Laptop.
+  1036→- Tablet.
+  1037→- Mobile.
+  1038→
+  1039→The homepage globe must be thoughtfully adapted for smaller screens.
+  1040→
+  1041→On mobile:
+  1042→
+  1043→- Reinterpret the globe experience for touch screens.
+  1044→- Avoid overly complex scroll animations.
+  1045→- Use accessible country-selection controls.
+  1046→- Convert floating discovery panels into suitable mobile drawers or panels.
+  1047→- Maintain readable typography and usable controls.
+  1048→- Provide an alternative country list when globe interaction is impractical.
+  1049→
+  1050→Do not simply shrink the desktop layout.
+  1051→
+  1052→Design mobile interactions intentionally.
+  1053→
+  1054→---
+  1055→
+  1056→# 19. Accessibility, SEO & Performance
+  1057→
+  1058→### Accessibility
+  1059→
+  1060→Follow WCAG 2.2 AA principles.
+  1061→
+  1062→Include:
+  1063→
+  1064→- Keyboard navigation.
+  1065→- Visible focus states.
+  1066→- Sufficient color contrast.
+  1067→- Accessible form labels.
+  1068→- Semantic HTML.
+  1069→- Reduced-motion support.
+  1070→- Accessible alternatives for interactive geographic elements.
+  1071→
+  1072→### SEO
+  1073→
+  1074→Implement:
+  1075→
+  1076→- Semantic page structure.
+  1077→- Search-friendly URLs.
+  1078→- Metadata.
+  1079→- Open Graph information.
+  1080→- Structured data for people, articles, and organizations where appropriate.
+  1081→- Sitemap.
+  1082→- Robots configuration.
+  1083→- Canonical URLs.
+  1084→- Proper indexability of public professional profiles.
+  1085→
+  1086→### Performance
+  1087→
+  1088→Prioritize performance despite the immersive visual experience.
+  1089→
+  1090→Requirements:
+  1091→
+  1092→- Lazy-load heavy visual assets.
+  1093→- Optimize portrait images.
+  1094→- Dynamically load the 3D globe.
+  1095→- Avoid blocking initial page rendering.
+  1096→- Minimize unnecessary React re-renders.
+  1097→- Optimize scroll animations.
+  1098→- Provide fallback rendering for low-performance devices.
+  1099→- Use CDN caching and appropriate cache invalidation.
+  1100→- Avoid loading unnecessary 3D resources on pages that do not use them.
+  1101→
+  1102→The globe should not prevent the rest of the homepage from becoming usable.
+  1103→
+  1104→---
+  1105→
+  1106→# 20. Internationalization
+  1107→
+  1108→English is the primary language.
+  1109→
+  1110→Architect the platform to support additional languages in the future.
+  1111→
+  1112→Use translation-ready UI components and content structures.
+  1113→
+  1114→Support localized URLs when additional languages are introduced.
+  1115→
+  1116→Avoid assumptions that the platform is limited to one country or geographic market.
+  1117→
+  1118→---
+  1119→
+  1120→# 21. Development Strategy
+  1121→
+  1122→Implement the project incrementally.
+  1123→
+  1124→Do not attempt to build every feature simultaneously.
+  1125→
+  1126→Follow these development phases:
+  1127→
+  1128→### Phase 1 — Foundation
+  1129→
+  1130→- Initialize Next.js.
+  1131→- Configure TypeScript.
+  1132→- Configure Tailwind CSS.
+  1133→- Establish design tokens.
+  1134→- Integrate shadcn/ui.
+  1135→- Configure Payload CMS.
+  1136→- Configure PostgreSQL.
+  1137→- Establish the initial folder and module architecture.
+  1138→
+  1139→### Phase 2 — Globe Proof of Concept
+  1140→
+  1141→Before building the complete homepage, create an isolated technical prototype of the 3D globe.
+  1142→
+  1143→Validate:
+  1144→
+  1145→- Realistic globe rendering.
+  1146→- Country boundaries.
+  1147→- Geographic data mapping.
+  1148→- Mouse and touch interaction.
+  1149→- Country selection.
+  1150→- Camera rotation.
+  1151→- Country-specific professional panels.
+  1152→- Scroll-driven transitions.
+  1153→- Performance on desktop and mobile.
+  1154→
+  1155→Do not proceed to the full homepage implementation until the core globe interactions are technically validated.
+  1156→
+  1157→### Phase 3 — Homepage
+  1158→
+  1159→Build:
+  1160→
+  1161→- Main navigation.
+  1162→- Featured professional card.
+  1163→- 3D globe integration.
+  1164→- Country ticker.
+  1165→- Expertise discovery.
+  1166→- Industry discovery.
+  1167→- Collections preview.
+  1168→- Magazine preview.
+  1169→- Get Featured CTA.
+  1170→- Footer.
+  1171→
+  1172→### Phase 4 — Professional Ecosystem
+  1173→
+  1174→Build:
+  1175→
+  1176→- Discover Professionals.
+  1177→- Individual professional profiles.
+  1178→- Expertise pages.
+  1179→- Industry pages.
+  1180→- Collection pages.
+  1181→- Stories and article pages.
+  1182→- Global search.
+  1183→
+  1184→### Phase 5 — CMS & Administrative Workflows
+  1185→
+  1186→Build and configure:
+  1187→
+  1188→- Professional management.
+  1189→- Featured scheduling.
+  1190→- Country management.
+  1191→- Expertise management.
+  1192→- Editorial management.
+  1193→- Get Featured submission review.
+  1194→- Roles and permissions.
+  1195→
+  1196→### Phase 6 — Production Readiness
+  1197→
+  1198→Implement:
+  1199→
+  1200→- SEO.
+  1201→- Performance optimization.
+  1202→- Accessibility testing.
+  1203→- Responsive testing.
+  1204→- Security checks.
+  1205→- Error handling.
+  1206→- Deployment.
+  1207→- Monitoring and backups.
+  1208→
+  1209→---
+  1210→
+  1211→# 22. Development Quality Requirements
+  1212→
+  1213→Follow these principles throughout implementation:
+  1214→
+  1215→1. Use reusable and maintainable components.
+  1216→2. Use TypeScript types for all important data structures.
+  1217→3. Avoid unnecessary `any` types.
+  1218→4. Keep components focused and modular.
+  1219→5. Separate business logic from presentation.
+  1220→6. Use structured CMS data rather than hardcoded production content.
+  1221→7. Implement real interactions rather than decorative buttons.
+  1222→8. Include appropriate loading, error, and empty states.
+  1223→9. Validate forms on both client and server.
+  1224→10. Protect administrative operations with proper authorization.
+  1225→11. Keep secrets and private credentials on the server.
+  1226→12. Avoid unnecessary dependencies.
+  1227→13. Follow Next.js and React best practices.
+  1228→14. Test important user flows.
+  1229→15. Keep the codebase ready for future expansion.
+  1230→
+  1231→If an existing codebase is provided:
+  1232→
+  1233→- Inspect the existing project before making changes.
+  1234→- Preserve useful existing architecture.
+  1235→- Avoid unnecessary rewrites.
+  1236→- Follow existing coding conventions where appropriate.
+  1237→
+  1238→---
+  1239→
+  1240→# 23. Expected Final Deliverable
+  1241→
+  1242→Create a polished, high-fidelity, production-oriented website experience.
+  1243→
+  1244→The result should demonstrate:
+  1245→
+  1246→- Distinctive SkilledSphere visual identity.
+  1247→- Premium homepage.
+  1248→- Interactive 3D globe.
+  1249→- Daily featured-professional concept.
+  1250→- Geographic professional discovery.
+  1251→- Expertise and industry exploration.
+  1252→- Curated collections.
+  1253→- Editorial magazine content.
+  1254→- Detailed individual professional profiles.
+  1255→- Functional global search.
+  1256→- Responsive layouts.
+  1257→- Payload CMS integration.
+  1258→- Structured PostgreSQL data.
+  1259→- Realistic international sample professionals.
+  1260→
+  1261→Ensure that the main interactions work, not just visually appear functional.
+  1262→
+  1263→Do not leave decorative buttons without actions.
+  1264→
+  1265→For features requiring backend infrastructure, implement the appropriate data models and integration structure rather than pretending that static sample data represents a fully operational backend.
+  1266→
+  1267→Use realistic sample data for development and clearly distinguish demo content from production content.
+  1268→
+  1269→---
+  1270→
+  1271→# 24. Final Product Goal
+  1272→
+  1273→SkilledSphere should feel like a premium global destination where people discover exceptional professionals, explore expertise across the world, read inspiring professional stories, and find meaningful opportunities for collaboration.
+  1274→
+  1275→It should be recognizable, immersive, elegant, technologically advanced, and distinctly different from conventional professional networking websites.
+  1276→
+  1277→**SkilledSphere is not another place to post about yourself. It is a place where the world discovers what makes you exceptional.**

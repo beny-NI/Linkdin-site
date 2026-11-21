@@ -1,0 +1,210 @@
+// SkilledSphere — Prisma schema (SQLite)
+// Professional discovery & editorial platform
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Country {
+  id           String        @id @default(cuid())
+  code         String        @unique // ISO 3166-1 alpha-2
+  name         String
+  flag         String // emoji
+  latitude     Float
+  longitude    Float
+  professionals Professional[]
+  createdAt    DateTime      @default(now())
+}
+
+model Expertise {
+  id           String       @id @default(cuid())
+  name         String
+  slug         String       @unique
+  description  String       @default("")
+  cluster      String       @default("Technology") // Technology | Business | Science & Research | Creative | Finance
+  order        Int          @default(0)
+  parentId     String?
+  parent       Expertise?   @relation("ExpertiseTree", fields: [parentId], references: [id])
+  children     Expertise[]  @relation("ExpertiseTree")
+  professionals ProfessionalExpertise[]
+  stories      StoryExpertise[]
+
+  @@index([parentId])
+}
+
+model Industry {
+  id           String       @id @default(cuid())
+  name         String
+  slug         String       @unique
+  description  String       @default("")
+  order        Int          @default(0)
+  professionals ProfessionalIndustry[]
+}
+
+model Professional {
+  id               String    @id @default(cuid())
+  slug             String    @unique
+  fullName         String
+  professionalTitle String
+  summary          String // short card bio
+  biography        String // long editorial bio
+  portraitUrl      String
+  city             String
+  organization     String?
+  countryCode      String
+  country          Country   @relation(fields: [countryCode], references: [code])
+  // JSON-encoded string fields (SQLite has no native arrays/JSON)
+  achievements     String    @default("[]") // string[]
+  experience       String    @default("[]") // {role, org, period, description}[]
+  education        String    @default("[]") // {degree, institution, year}[]
+  projects         String    @default("[]") // {name, description, year}[]
+  publications     String    @default("[]") // {title, venue, year}[]
+  awards           String    @default("[]") // {title, org, year}[]
+  links            String    @default("[]") // {label, url}[]
+  published        Boolean   @default(true)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  expertise        ProfessionalExpertise[]
+  industries       ProfessionalIndustry[]
+  collections      CollectionMember[]
+  stories          StoryProfessional[]
+  featuredSchedules FeaturedSchedule[]
+
+  @@index([published, countryCode])
+  @@index([published, createdAt])
+  @@index([fullName])
+}
+
+model ProfessionalExpertise {
+  professionalId String
+  expertiseId    String
+  professional   Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+  expertise      Expertise    @relation(fields: [expertiseId], references: [id], onDelete: Cascade)
+
+  @@id([professionalId, expertiseId])
+
+  @@index([expertiseId])
+}
+
+model ProfessionalIndustry {
+  professionalId String
+  industryId     String
+  professional   Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+  industry       Industry     @relation(fields: [industryId], references: [id], onDelete: Cascade)
+
+  @@id([professionalId, industryId])
+
+  @@index([industryId])
+}
+
+model Collection {
+  id          String             @id @default(cuid())
+  title       String
+  slug        String             @unique
+  description String
+  coverUrl    String?
+  kind        String             @default("editorial") // editorial | ranking
+  edition     String? // e.g. "2025 Edition"
+  published   Boolean            @default(true)
+  createdAt   DateTime           @default(now())
+  members     CollectionMember[]
+
+  @@index([published])
+}
+
+model CollectionMember {
+  collectionId  String
+  professionalId String
+  order         Int     @default(0)
+  collection    Collection  @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  professional  Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+
+  @@id([collectionId, professionalId])
+
+  @@index([professionalId])
+}
+
+model Story {
+  id                  String    @id @default(cuid())
+  slug                String    @unique
+  title               String
+  subtitle            String
+  coverUrl            String?
+  author              String
+  category            String    @default("Interview") // Interview | Leadership | Innovation | Industry Insight | Success Story
+  excerpt             String
+  content             String // markdown
+  readingMinutes      Int       @default(6)
+  publicationDate     DateTime
+  published           Boolean   @default(true)
+  createdAt           DateTime  @default(now())
+
+  relatedProfessionals StoryProfessional[]
+  relatedExpertise     StoryExpertise[]
+
+  @@index([published, publicationDate])
+}
+
+model StoryProfessional {
+  storyId       String
+  professionalId String
+  story         Story       @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  professional  Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+
+  @@id([storyId, professionalId])
+
+  @@index([professionalId])
+}
+
+model StoryExpertise {
+  storyId     String
+  expertiseId String
+  story       Story     @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  expertise   Expertise @relation(fields: [expertiseId], references: [id], onDelete: Cascade)
+
+  @@id([storyId, expertiseId])
+
+  @@index([expertiseId])
+}
+
+model FeaturedSchedule {
+  id             String   @id @default(cuid())
+  professionalId String
+  professional   Professional @relation(fields: [professionalId], references: [id], onDelete: Cascade)
+  featuredDate   DateTime // the day this person is featured
+  label          String   @default("Person of the Day")
+  active         Boolean  @default(true)
+  createdAt      DateTime @default(now())
+
+  @@unique([featuredDate]) // prevent conflicting active schedules for the same day
+
+  @@index([active, featuredDate])
+}
+
+model FeaturedApplication {
+  id               String   @id @default(cuid())
+  fullName         String
+  professionalTitle String
+  email            String
+  countryCode      String
+  industry         String
+  expertise        String   @default("[]") // JSON string[]
+  biography        String
+  linkedinUrl      String?
+  websiteUrl       String?
+  photoUrl         String?
+  achievements     String   @default("[]") // JSON string[]
+  supportingLinks  String   @default("[]") // JSON string[]
+  status           String   @default("pending") // pending | in-review | approved | declined
+  editorialNotes   String?
+  createdAt        DateTime @default(now())
+
+  @@index([status, createdAt])
+  @@index([email, createdAt])
+}
