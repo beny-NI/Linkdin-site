@@ -11,10 +11,7 @@ export async function GET(
   const { slug } = await params;
   const prof = await db.professional.findUnique({
     where: { slug },
-    include: {
-      ...professionalInclude,
-      featuredSchedules: { where: { active: true }, orderBy: { featuredDate: "desc" }, take: 1 },
-    },
+    include: professionalInclude,
   });
 
   if (!prof || !prof.published) {

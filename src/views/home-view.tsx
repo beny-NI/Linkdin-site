@@ -90,16 +90,6 @@ interface HeroCardData {
   country: { name: string; flag: string };
   expertise: { slug: string; name: string }[];
   achievements: string[];
-  label: string;
-  date: string | null;
-}
-
-function formatHeroDate(date: string) {
-  return new Date(date).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
 }
 
 /** One hero card. `isFirst` only decides h1 vs h2 (SEO: one h1 per page). */
@@ -130,16 +120,7 @@ function HeroCardBody({ card, isFirst }: { card: HeroCardData | null; isFirst: b
 
         {/* Content */}
         <div className="flex min-w-0 flex-1 flex-col gap-2 p-3.5 sm:gap-3 sm:p-6 lg:gap-4 lg:p-8 2xl:gap-5 2xl:p-10">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="rounded-full bg-gold-500 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.14em] text-navy-900 sm:px-3 sm:text-[10px] sm:tracking-[0.18em] 2xl:px-4 2xl:py-1.5 2xl:text-xs">
-              {card?.label ?? "Person of the Day"}
-            </span>
-            {card?.date && (
-              <span className="hidden text-[11px] font-medium uppercase tracking-wider text-navy-200 sm:inline 2xl:text-sm">
-                {formatHeroDate(card.date)}
-              </span>
-            )}
-          </div>
+
           <div>
             <Heading className="font-heading text-lg font-extrabold leading-tight text-white sm:text-2xl md:text-3xl lg:text-4xl 2xl:text-[2.8rem]">
               {card?.fullName ?? <Skeleton className="h-8 w-52 bg-navy-800" />}
@@ -557,7 +538,7 @@ function GlobeExperience() {
   const promptOpacity = useTransform(scrollYProgress, [0.28, 0.42, 0.7, 0.79], [0, 1, 1, 0]);
 
   const { data } = useBootstrap();
-  const featured = data?.featured ?? null;
+  const hero = data?.hero ?? [];
   const countries = data?.countries ?? [];
 
   const markers = useMemo(
@@ -573,11 +554,10 @@ function GlobeExperience() {
     [countries]
   );
 
-  // Today's featured professional first, then the upcoming ones
-  const heroCards = useMemo<HeroCardData[]>(() => {
-    if (!featured) return [];
-    const p = featured.professional;
-    const first: HeroCardData = {
+// The people chosen in Admin → Homepage, in that order (1 to 5 cards)
+const heroCards = useMemo<HeroCardData[]>(
+  () =>
+    hero.map((p) => ({
       slug: p.slug,
       fullName: p.fullName,
       professionalTitle: p.professionalTitle,
@@ -587,26 +567,9 @@ function GlobeExperience() {
       country: p.country,
       expertise: p.expertise,
       achievements: p.achievements ?? [],
-      label: featured.label,
-      date: featured.date,
-    };
-    const rest: HeroCardData[] = featured.upcoming
-      .filter((u) => u.professional.slug !== p.slug)
-      .map((u) => ({
-        slug: u.professional.slug,
-        fullName: u.professional.fullName,
-        professionalTitle: u.professional.professionalTitle,
-        summary: u.professional.summary,
-        portraitUrl: u.professional.portraitUrl,
-        city: u.professional.city,
-        country: u.professional.country,
-        expertise: u.professional.expertise,
-        achievements: [],
-        label: u.professional.featuredLabel ?? "Featured Professional",
-        date: u.date,
-      }));
-    return [first, ...rest];
-  }, [featured]);
+    })),
+  [hero]
+);
 
   return (
     <section

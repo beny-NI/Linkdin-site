@@ -67,6 +67,9 @@ model Professional {
   awards           String    @default("[]") // {title, org, year}[]
   links            String    @default("[]") // {label, url}[]
   published        Boolean   @default(true)
+  archived         Boolean   @default(false) // admin: moved to the archive (hidden from the site)
+  homeFeatured     Boolean   @default(false) // admin: shown in the homepage hero carousel
+  homeOrder        Int       @default(0)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
@@ -112,6 +115,8 @@ model Collection {
   kind        String             @default("editorial") // editorial | ranking
   edition     String? // e.g. "2025 Edition"
   published   Boolean            @default(true)
+  homeFeatured Boolean           @default(false) // admin: pinned to the homepage
+  homeOrder   Int                @default(0)
   createdAt   DateTime           @default(now())
   members     CollectionMember[]
 
@@ -143,6 +148,9 @@ model Story {
   readingMinutes      Int       @default(6)
   publicationDate     DateTime
   published           Boolean   @default(true)
+  archived            Boolean   @default(false) // admin: moved to the archive (hidden from the site)
+  homeFeatured        Boolean   @default(false) // admin: pinned to the homepage
+  homeOrder           Int       @default(0)
   createdAt           DateTime  @default(now())
 
   relatedProfessionals StoryProfessional[]
@@ -207,4 +215,18 @@ model FeaturedApplication {
 
   @@index([status, createdAt])
   @@index([email, createdAt])
+}
+
+// Privacy-friendly analytics: no IP, no cookies. visitorHash = sha256(daily salt + ip + user-agent),
+// so it can only be used to count unique visitors per day.
+model PageView {
+  id          String   @id @default(cuid())
+  path        String
+  visitorHash String
+  referrer    String? // host only
+  device      String   @default("desktop") // desktop | mobile
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path, createdAt])
 }

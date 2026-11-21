@@ -1,6 +1,7 @@
 "use client";
 
-import { Globe2, Linkedin, Twitter, Youtube } from "lucide-react";
+import Link from "next/link";
+import { Globe2, Linkedin, Lock, Twitter, Youtube } from "lucide-react";
 import { useAppStore, type View } from "@/lib/store";
 
 const COLUMNS: { title: string; links: { label: string; view: View }[] }[] = [
@@ -119,7 +120,17 @@ export function Footer() {
         <div className="gold-hairline mt-12" />
         <div className="mt-6 flex flex-col items-center justify-between gap-3 text-xs text-navy-300 sm:flex-row">
           <p>© {new Date().getFullYear()} SkilledSphere. All rights reserved.</p>
-          <p>Crafted for professionals worldwide. Demo data for development purposes.</p>
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:gap-5">
+            <p>Crafted for professionals worldwide. Demo data for development purposes.</p>
+            {/* temporary entry point to the admin panel — will be moved later */}
+            <Link
+              href="/admin"
+              className="inline-flex items-center gap-1.5 rounded-full border border-gold-500/50 px-3.5 py-1.5 text-xs font-semibold text-gold-400 transition-colors hover:bg-gold-500 hover:text-navy-950 focus-visible:outline-2 focus-visible:outline-gold-500"
+            >
+              <Lock className="h-3.5 w-3.5" aria-hidden />
+              Admin login
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

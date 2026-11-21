@@ -3,17 +3,14 @@ import { db } from "@/lib/db";
 import { professionalInclude, storyInclude, toProfessionalCard, toProfessionalDetail, toStoryCard } from "@/lib/serialize";
 import type { BootstrapDTO, CollectionCardDTO, ExpertiseDTO } from "@/lib/types";
 
-// "Today's featured professional" depends on the date, so this stays dynamic;
-// the CDN/browser cache below absorbs the traffic instead.
+// Dynamic so admin changes show up quickly; the CDN/browser cache below absorbs the traffic.
 export const dynamic = "force-dynamic";
 
 const COLLECTION_PREVIEW_MEMBERS = 8;
-// Cards in the home-page hero carousel (today's featured + the rest).
+// The home-page hero shows the people chosen in Admin → Homepage (max 5, in that order).
 const HERO_CARD_COUNT = 5;
 
 export async function GET() {
-  const endOfToday = endOfTodayUtc();
-
   // ONE parallel round-trip (previously: 7 in parallel + 1 sequential + 1 more at the end).
   const [
     countriesRaw,
@@ -23,8 +20,7 @@ export async function GET() {
     storiesRaw,
     professionalCount,
     storyCount,
-    currentFeatured,
-    upcoming,
+    heroPinned,
   ] = await Promise.all([
     db.country.findMany({
       include: { _count: { select: { professionals: { where: { published: true } } } } },
@@ -49,26 +45,23 @@ export async function GET() {
           include: { professional: { include: professionalInclude } },
         },
       },
-      orderBy: { createdAt: "asc" },
+      // admin-pinned collections first (Admin → Homepage), then the rest
+      orderBy: [{ homeFeatured: "desc" }, { homeOrder: "asc" }, { createdAt: "asc" }],
     }),
     db.story.findMany({
-      where: { published: true },
+      where: { published: true, archived: false },
       include: storyInclude,
-      orderBy: { publicationDate: "desc" },
+      // admin-pinned stories first (Admin → Homepage), then the newest
+      orderBy: [{ homeFeatured: "desc" }, { homeOrder: "asc" }, { publicationDate: "desc" }],
       take: 6,
     }),
     db.professional.count({ where: { published: true } }),
-    db.story.count({ where: { published: true } }),
-    db.featuredSchedule.findFirst({
-      where: { active: true, featuredDate: { lte: endOfToday } },
-      include: { professional: { include: professionalInclude } },
-      orderBy: { featuredDate: "desc" },
-    }),
-    db.featuredSchedule.findMany({
-      where: { active: true, featuredDate: { gt: endOfToday } },
-      include: { professional: { include: professionalInclude } },
-      orderBy: { featuredDate: "asc" },
-      take: HERO_CARD_COUNT - 1,
+    db.story.count({ where: { published: true, archived: false } }),
+    db.professional.findMany({
+      where: { published: true, archived: false, homeFeatured: true },
+      include: professionalInclude,
+      orderBy: { homeOrder: "asc" },
+      take: HERO_CARD_COUNT,
     }),
   ]);
 
@@ -125,57 +118,21 @@ export async function GET() {
     members: c.members.map((m) => toProfessionalCard(m.professional)),
   }));
 
-  // If fewer than HERO_CARD_COUNT people are scheduled, top the carousel up with
-  // other published professionals so it always has enough cards.
-  const missing = currentFeatured ? HERO_CARD_COUNT - 1 - upcoming.length : 0;
-  const heroExtras =
-    currentFeatured && missing > 0
-      ? await db.professional.findMany({
-          where: {
-            published: true,
-            id: {
-              notIn: [currentFeatured.professionalId, ...upcoming.map((u) => u.professionalId)],
-            },
-          },
+  // Nobody chosen yet? Fall back to the first published profiles so the hero is never empty.
+  // (If 1-4 people are chosen, exactly those are shown.)
+  const heroRaw =
+    heroPinned.length > 0
+      ? heroPinned
+      : await db.professional.findMany({
+          where: { published: true, archived: false },
           include: professionalInclude,
           orderBy: { createdAt: "asc" },
-          take: missing,
-        })
-      : [];
-
-  const featured = currentFeatured
-    ? {
-        label: currentFeatured.label,
-        date: currentFeatured.featuredDate.toISOString(),
-        // bug fix: the label shown on the card is the label of TODAY's schedule,
-        // not whichever schedule row of that person happened to be first.
-        professional: {
-          ...toProfessionalDetail({
-            ...currentFeatured.professional,
-            featuredSchedules: [
-              {
-                label: currentFeatured.label,
-                featuredDate: currentFeatured.featuredDate,
-                active: currentFeatured.active,
-              },
-            ],
-          }),
-        },
-        upcoming: [
-          ...upcoming.map((u) => ({
-            date: u.featuredDate.toISOString() as string | null,
-            professional: toProfessionalCard(u.professional),
-          })),
-          ...heroExtras.map((p) => ({
-            date: null as string | null,
-            professional: toProfessionalCard(p),
-          })),
-        ],
-      }
-    : null;
+          take: HERO_CARD_COUNT,
+        });
+  const hero = heroRaw.map((p) => toProfessionalDetail(p));
 
   const payload: BootstrapDTO = {
-    featured,
+    hero,
     countries,
     expertiseTree: tree,
     industries,
@@ -193,10 +150,4 @@ export async function GET() {
   return NextResponse.json(payload, {
     headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" },
   });
-}
-
-function endOfTodayUtc(): Date {
-  const d = new Date();
-  d.setUTCHours(23, 59, 59, 999);
-  return d;
 }

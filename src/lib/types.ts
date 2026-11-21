@@ -92,15 +92,9 @@ export interface StoryDetailDTO extends StoryCardDTO {
   relatedStories: StoryCardDTO[];
 }
 
-export interface FeaturedDTO {
-  label: string;
-  date: string;
-  professional: ProfessionalDetailDTO;
-  upcoming: { date: string | null; professional: ProfessionalCardDTO }[];
-}
 
 export interface BootstrapDTO {
-  featured: FeaturedDTO | null;
+  hero: ProfessionalDetailDTO[];
   countries: CountryDTO[];
   expertiseTree: ExpertiseDTO[];
   industries: IndustryDTO[];

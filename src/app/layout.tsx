@@ -4,9 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { Providers } from "@/components/site/providers";
 import { RouterBridge } from "@/components/site/router-bridge";
-import { Header } from "@/components/site/header";
-import { Footer } from "@/components/site/footer";
-import { SearchDialog } from "@/components/site/search-dialog";
+import { SiteChrome } from "@/components/site/site-chrome";
 import { JsonLd } from "@/components/seo/json-ld";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_TAGLINE, SITE_URL, absoluteUrl } from "@/lib/site";
 
@@ -93,13 +91,8 @@ export default function RootLayout({
         <JsonLd data={siteJsonLd} />
         <Providers>
           <RouterBridge />
-          <div className="flex min-h-screen flex-col">
-            <Header />
-            {/* each route's <main> comes from app/template.tsx */}
-            {children}
-            <Footer />
-          </div>
-          <SearchDialog />
+          {/* header / footer / search are skipped on /admin/* (see site-chrome.tsx) */}
+          <SiteChrome>{children}</SiteChrome>
         </Providers>
         <Toaster />
       </body>
