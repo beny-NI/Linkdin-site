@@ -75,6 +75,7 @@ export interface CountryDetail {
   code: string;
   name: string;
   flag: string;
+  total?: number;
   latitude: number;
   longitude: number;
   professionals: ProfessionalCardDTO[];

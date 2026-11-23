@@ -13,12 +13,13 @@ export async function GET(req: NextRequest) {
 
   try {
     const [professionals, collections, stories] = await Promise.all([
-      db.professional.findMany({ where: { homeFeatured: true }, orderBy: { homeOrder: "asc" }, select: { id: true } }),
+      db.professional.findMany({ where: { homeFeatured: true }, orderBy: { homeOrder: "asc" }, select: { id: true, homePotd: true } }),
       db.collection.findMany({ where: { homeFeatured: true }, orderBy: { homeOrder: "asc" }, select: { id: true } }),
       db.story.findMany({ where: { homeFeatured: true }, orderBy: { homeOrder: "asc" }, select: { id: true } }),
     ]);
     return NextResponse.json({
       professionals: professionals.map((p) => p.id),
+      potd: professionals.find((p) => p.homePotd)?.id ?? null,
       collections: collections.map((c) => c.id),
       stories: stories.map((s) => s.id),
     });
@@ -42,11 +43,14 @@ export async function PUT(req: NextRequest) {
 
   try {
     await db.$transaction([
-      db.professional.updateMany({ data: { homeFeatured: false, homeOrder: 0 } }),
+      db.professional.updateMany({ data: { homeFeatured: false, homeOrder: 0, homePotd: false } }),
       db.collection.updateMany({ data: { homeFeatured: false, homeOrder: 0 } }),
       db.story.updateMany({ data: { homeFeatured: false, homeOrder: 0 } }),
       ...professionals.map((id, i) =>
-        db.professional.updateMany({ where: { id }, data: { homeFeatured: true, homeOrder: i } })
+        db.professional.updateMany({
+          where: { id },
+          data: { homeFeatured: true, homeOrder: i, homePotd: data.potd === id },
+        })
       ),
       ...collections.map((id, i) =>
         db.collection.updateMany({ where: { id }, data: { homeFeatured: true, homeOrder: i } })

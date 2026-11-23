@@ -61,3 +61,13 @@ db/*.db
 db/*.db
 /tool-results/
 /upload/
+
+# Local backups and temporary import packages
+/backups/
+/skilledsphere-admin-update-3.zip
+/skilledsphere-import (1).zip
+/skilledsphere-import (1)/
+/prisma/people-all.json
+/selection-review.xlsx
+/image-names.csv
+/tatus

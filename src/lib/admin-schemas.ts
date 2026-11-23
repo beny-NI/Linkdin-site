@@ -31,6 +31,8 @@ export const STORY_CATEGORIES = ["Interview", "Leadership", "Innovation", "Indus
 export const COLLECTION_KINDS = ["editorial", "ranking"] as const;
 export const EXPERTISE_CLUSTERS = ["Technology", "Business", "Science & Research", "Creative", "Finance"] as const;
 
+export const PLACEHOLDER_PORTRAIT = "/images/portraits/placeholder.svg";
+
 export const professionalSchema = z.object({
   slug: slugField,
   fullName: requiredText(120, "Full name").pipe(z.string().min(2, "Full name is too short")),
@@ -66,6 +68,10 @@ export const professionalSchema = z.object({
   expertiseIds: z.array(z.string()).max(30).default([]),
   industryIds: z.array(z.string()).max(30).default([]),
   published: z.boolean().default(true),
+}).superRefine((v, ctx) => {
+  if (v.published && v.portraitUrl === PLACEHOLDER_PORTRAIT) {
+    ctx.addIssue({ code: "custom", path: ["portraitUrl"], message: "Upload a real portrait photo before publishing" });
+  }
 });
 export type ProfessionalInput = z.infer<typeof professionalSchema>;
 
@@ -102,6 +108,8 @@ export const HOME_LIMITS = { professionals: 5, collections: 3, stories: 3 } as c
 
 export const homepageSchema = z.object({
   professionals: z.array(z.string()).max(HOME_LIMITS.professionals, "The hero can show at most 5 people"),
+  /** the one hero person with the "Person of the Day" look (must be one of `professionals`) */
+  potd: z.string().nullish().transform((v) => (v ? v : null)),
   collections: z.array(z.string()).max(HOME_LIMITS.collections),
   stories: z.array(z.string()).max(HOME_LIMITS.stories),
 });
@@ -133,4 +141,17 @@ export const countrySchema = z.object({
   flag: requiredText(16, "Flag"),
   latitude: z.number().min(-90).max(90),
   longitude: z.number().min(-180).max(180),
+});
+
+export const globeSchema = z.object({
+  country: z.string().trim().length(2),
+  ids: z.array(z.string()).max(5, "At most 5 people per country"),
+});
+
+export const bulkSchema = z.object({
+  entity: z.enum(["professionals", "stories", "collections"]),
+  action: z.enum(["delete", "publish", "unpublish", "archive", "restore"]),
+  ids: z.array(z.string()).max(1000).optional(),
+  /** apply to everything matching the current list filter instead of explicit ids */
+  all: z.object({ q: z.string().max(100).default(""), status: z.enum(["all", "published", "draft", "archived"]).default("all") }).optional(),
 });

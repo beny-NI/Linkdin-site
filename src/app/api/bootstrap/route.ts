@@ -129,7 +129,7 @@ export async function GET() {
           orderBy: { createdAt: "asc" },
           take: HERO_CARD_COUNT,
         });
-  const hero = heroRaw.map((p) => toProfessionalDetail(p));
+  const hero = heroRaw.map((p) => ({ ...toProfessionalDetail(p), isPotd: p.homePotd }));
 
   const payload: BootstrapDTO = {
     hero,
@@ -151,3 +151,4 @@ export async function GET() {
     headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" },
   });
 }
+

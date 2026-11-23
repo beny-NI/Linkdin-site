@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-auth";
 import { parseBody, toggleData, parseJsonArray, serverError } from "@/lib/admin-server";
-import { professionalSchema, togglePatchSchema } from "@/lib/admin-schemas";
+import { PLACEHOLDER_PORTRAIT, professionalSchema, togglePatchSchema } from "@/lib/admin-schemas";
 
 export const dynamic = "force-dynamic";
 
@@ -109,8 +109,11 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
   if (error) return error;
 
   try {
-    const exists = await db.professional.findUnique({ where: { id }, select: { id: true } });
+    const exists = await db.professional.findUnique({ where: { id }, select: { id: true, portraitUrl: true } });
     if (!exists) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    if (data.published === true && exists.portraitUrl === PLACEHOLDER_PORTRAIT) {
+      return NextResponse.json({ error: "Upload a real portrait photo before publishing" }, { status: 422 });
+    }
     const updated = await db.professional.update({
       where: { id },
       data: toggleData(data),

@@ -94,7 +94,7 @@ export interface StoryDetailDTO extends StoryCardDTO {
 
 
 export interface BootstrapDTO {
-  hero: ProfessionalDetailDTO[];
+  hero: (ProfessionalDetailDTO & { isPotd: boolean })[];
   countries: CountryDTO[];
   expertiseTree: ExpertiseDTO[];
   industries: IndustryDTO[];

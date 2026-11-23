@@ -70,6 +70,9 @@ model Professional {
   archived         Boolean   @default(false) // admin: moved to the archive (hidden from the site)
   homeFeatured     Boolean   @default(false) // admin: shown in the homepage hero carousel
   homeOrder        Int       @default(0)
+  homePotd         Boolean   @default(false) // admin: hero card with the "Person of the Day" look
+  countryFeatured  Boolean   @default(false) // admin: listed when the country is clicked on the globe
+  countryOrder     Int       @default(0)
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 

@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   ExternalLink,
+  Globe2,
   Inbox,
   Layers,
   LayoutDashboard,
@@ -39,7 +40,10 @@ const GROUPS: { title: string; items: NavItem[] }[] = [
   },
   {
     title: "Homepage",
-    items: [{ href: "/admin/homepage", label: "Homepage", icon: LayoutTemplate }],
+    items: [
+      { href: "/admin/homepage", label: "Homepage", icon: LayoutTemplate },
+      { href: "/admin/globe", label: "Globe countries", icon: Globe2 },
+    ],
   },
   { title: "Inbox", items: [{ href: "/admin/applications", label: "Applications", icon: Inbox }] },
   { title: "Setup", items: [{ href: "/admin/taxonomy", label: "Expertise & places", icon: Tags }] },

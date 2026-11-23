@@ -19,6 +19,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import * as THREE from "three";
 import { cn } from "@/lib/utils";
+import GlobeCountryLabels from "./GlobeCountryLabels";
 import {
   COUNTRY_FEATURES,
   latLonToVector3,
@@ -1044,6 +1045,8 @@ function GlobeScene(props: SceneProps) {
             depthWrite={false}
           />
         </lineSegments>
+
+        <GlobeCountryLabels />
 
         {/* selected country: gold outline + translucent gold patch */}
         {selectedGeometry && (

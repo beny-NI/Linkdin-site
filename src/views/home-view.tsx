@@ -90,6 +90,7 @@ interface HeroCardData {
   country: { name: string; flag: string };
   expertise: { slug: string; name: string }[];
   achievements: string[];
+  potd: boolean;
 }
 
 /** One hero card. `isFirst` only decides h1 vs h2 (SEO: one h1 per page). */
@@ -98,7 +99,14 @@ function HeroCardBody({ card, isFirst }: { card: HeroCardData | null; isFirst: b
   const Heading = isFirst ? "h1" : "h2";
 
   return (
-    <div className="h-full overflow-hidden rounded-3xl border border-gold-500/40 bg-navy-950/85 shadow-2xl shadow-navy-950/80 backdrop-blur-md lg:min-h-[440px] 2xl:min-h-[550px]">
+    <div
+      className={cn(
+        "h-full overflow-hidden rounded-3xl backdrop-blur-md lg:min-h-[440px] 2xl:min-h-[550px]",
+        card?.potd
+          ? "border-2 border-gold-400 bg-gradient-to-br from-navy-900/95 via-navy-950/95 to-[#2a2110]/95 shadow-[0_0_70px_-8px_rgba(198,169,107,0.55)] ring-1 ring-gold-300/40"
+          : "border border-gold-500/40 bg-navy-950/85 shadow-2xl shadow-navy-950/80"
+      )}
+    >
       <div className="flex h-full flex-row">
         {/* Portrait */}
         <div className="relative w-[40%] shrink-0 self-stretch overflow-hidden sm:w-[42%] lg:w-[40%]">
@@ -120,6 +128,11 @@ function HeroCardBody({ card, isFirst }: { card: HeroCardData | null; isFirst: b
 
         {/* Content */}
         <div className="flex min-w-0 flex-1 flex-col gap-2 p-3.5 sm:gap-3 sm:p-6 lg:gap-4 lg:p-8 2xl:gap-5 2xl:p-10">
+          {card?.potd && (
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-gradient-to-r from-gold-300 via-gold-400 to-gold-500 px-3 py-1 text-[9px] font-extrabold uppercase tracking-[0.16em] text-navy-950 shadow-lg shadow-gold-500/30 sm:text-[10px] 2xl:px-4 2xl:py-1.5 2xl:text-xs">
+              <Sparkles className="h-3 w-3" aria-hidden /> Person of the Day
+            </span>
+          )}
 
           <div>
             <Heading className="font-heading text-lg font-extrabold leading-tight text-white sm:text-2xl md:text-3xl lg:text-4xl 2xl:text-[2.8rem]">
@@ -311,7 +324,7 @@ function HeroCarousel({ cards }: { cards: HeroCardData[] }) {
               aria-label={`${i + 1} of ${count}`}
             >
               {/* the content is inert while the card is behind the front one */}
-              <div inert={!front} className={cn(!front && "pointer-events-none select-none")}>
+              <div inert={!front} className={cn("h-full", !front && "pointer-events-none select-none")}>
                 <HeroCardBody card={card} isFirst={i === 0} />
               </div>
               {/* click a card that peeks out from behind to bring it forward */}
@@ -567,6 +580,7 @@ const heroCards = useMemo<HeroCardData[]>(
       country: p.country,
       expertise: p.expertise,
       achievements: p.achievements ?? [],
+      potd: p.isPotd,
     })),
   [hero]
 );
@@ -813,7 +827,7 @@ function PanelContent({
   onAll,
 }: {
   code: string | null;
-  country: { code: string; name: string; flag: string; professionals: { slug: string; fullName: string; professionalTitle: string; portraitUrl: string; expertise: { name: string }[] }[] } | null;
+  country: { code: string; name: string; flag: string; total?: number; professionals: { slug: string; fullName: string; professionalTitle: string; portraitUrl: string; expertise: { name: string }[] }[] } | null;
   isLoading: boolean;
   onClose: () => void;
   onAll: (code: string) => void;
@@ -838,8 +852,8 @@ function PanelContent({
                 {country.name}
               </h3>
               <p className="mt-0.5 text-xs text-navy-200 lg:text-sm">
-                {country.professionals.length}{" "}
-                {country.professionals.length === 1 ? "professional" : "professionals"} listed
+                {(country.total ?? country.professionals.length)}{" "}
+                {(country.total ?? country.professionals.length) === 1 ? "professional" : "professionals"} listed
               </p>
             </>
           )}

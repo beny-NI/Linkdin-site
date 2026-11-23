@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { requireAdmin } from "@/lib/admin-auth";
 import { parseBody } from "@/lib/admin-server";
 import { clientIp, rateLimit } from "@/lib/rate-limit";
+import { AiError, aiComplete, aiConfigured, aiMissingSettings, extractJsonObject } from "@/lib/ai";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -105,28 +106,13 @@ export async function POST(req: NextRequest) {
     );
   }
 
-
-  const apiKey = process.env.API_KEY;
-  const baseUrl = process.env.BASE_URL;
-  const model = process.env.MODEL;
-
-  if (!apiKey || !baseUrl || !model) {
+  if (!aiConfigured()) {
+    // no AI available: at least take the name / headline from the page title ("Name - Title - Company | LinkedIn")
     const first = source.split("\n").find((l) => l.includes(" - ")) ?? "";
-    const [name, title, org] = first
-      .replace(/\|\s*LinkedIn.*$/i, "")
-      .split(" - ")
-      .map((x) => x.trim());
-
-    notes.push(
-      "Set API_KEY, BASE_URL and MODEL in .env to enable automatic AI profile extraction. Only the basics were read."
-    );
-
+    const [name, title, org] = first.replace(/\|\s*LinkedIn.*$/i, "").split(" - ").map((x) => x.trim());
+    notes.push(`AI is not set up (missing ${aiMissingSettings().join(", ")} in .env), so only the basics were read.`);
     return NextResponse.json({
-      fields: {
-        fullName: name ?? "",
-        professionalTitle: title ?? "",
-        organization: org ?? "",
-      },
+      fields: { fullName: name ?? "", professionalTitle: title ?? "", organization: org ?? "" },
       notes,
     });
   }
@@ -138,103 +124,16 @@ export async function POST(req: NextRequest) {
   ]);
 
   let parsed: Record<string, unknown>;
-
   try {
-    const ctrl = new AbortController();
-    const timer = setTimeout(() => ctrl.abort(), 50_000);
-
-    let res: Response;
-
-    try {
-      res = await fetch(
-        `${baseUrl.replace(/\/+$/, "")}/chat/completions`,
-        {
-          method: "POST",
-          signal: ctrl.signal,
-          headers: {
-            Authorization: `Bearer ${apiKey}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model,
-            max_tokens: 4000,
-            temperature: 0.2,
-            messages: [
-              {
-                role: "system",
-                content: SYSTEM,
-              },
-              {
-                role: "user",
-                content: `Countries: ${countries.map((c) => c.name).join("; ")}
-Expertise: ${expertise.map((e) => e.name).join("; ")}
-Industries: ${industries.map((i) => i.name).join("; ")}
-
-<profile>
-${source.slice(0, 35000)}
-</profile>`,
-              },
-            ],
-          }),
-        }
-      );
-    } finally {
-      clearTimeout(timer);
-    }
-
-    if (!res.ok) {
-      const errorText = await res.text();
-      console.error(
-        "[autofill] GapGPT status",
-        res.status,
-        errorText.slice(0, 1000)
-      );
-
-      return NextResponse.json(
-        {
-          error: `The AI service answered with an error (${res.status}). Check API_KEY, BASE_URL and MODEL.`,
-        },
-        { status: 502 }
-      );
-    }
-
-    const body = (await res.json()) as {
-      choices?: {
-        message?: {
-          content?: string | { type?: string; text?: string }[] | null;
-        };
-      }[];
-    };
-
-    const content = body.choices?.[0]?.message?.content;
-
-    const text =
-      typeof content === "string"
-        ? content
-        : Array.isArray(content)
-          ? content.map((part) => part.text ?? "").join("\n")
-          : "";
-
-    const start = text.indexOf("{");
-    const end = text.lastIndexOf("}");
-
-    if (start === -1 || end === -1 || end < start) {
-      throw new Error("AI response did not contain valid JSON.");
-    }
-
-    parsed = JSON.parse(text.slice(start, end + 1));
-  } catch (err) {
-    console.error("[autofill]", err);
-
-    return NextResponse.json(
-      {
-        error:
-          "Could not read the profile automatically. Check the AI service configuration or try pasting more profile text.",
-      },
-      { status: 502 }
+    const answer = await aiComplete(
+      SYSTEM,
+      `Countries: ${countries.map((c) => c.name).join("; ")}\nExpertise: ${expertise.map((e) => e.name).join("; ")}\nIndustries: ${industries.map((i) => i.name).join("; ")}\n\n<profile>\n${source.slice(0, 35000)}\n</profile>`
     );
+    parsed = extractJsonObject(answer);
+  } catch (err) {
+    const message = err instanceof AiError ? err.message : "Could not read the profile automatically";
+    return NextResponse.json({ error: message }, { status: err instanceof AiError ? err.status : 502 });
   }
-
 
   const byName = <T extends { name: string }>(list: T[], names: unknown) =>
     (Array.isArray(names) ? names : [])

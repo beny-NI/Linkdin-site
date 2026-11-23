@@ -5,6 +5,8 @@ import { professionalInclude, toProfessionalCard } from "@/lib/serialize";
 
 export const dynamic = "force-dynamic";
 
+const COUNTRY_PANEL_MAX = 5;
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ code: string }> }
@@ -17,7 +19,8 @@ export async function GET(
       professionals: {
         where: { published: true },
         include: professionalInclude,
-        orderBy: { fullName: "asc" },
+        // people chosen in Admin → Globe countries come first (in that order), then A–Z
+        orderBy: [{ countryFeatured: "desc" }, { countryOrder: "asc" }, { fullName: "asc" }],
       },
     },
   });
@@ -29,7 +32,9 @@ export async function GET(
       flag: country.flag,
       latitude: country.latitude,
       longitude: country.longitude,
-      professionals: country.professionals.map((p) => toProfessionalCard(p)),
+      // the panel on the globe lists at most COUNTRY_PANEL_MAX people; `total` is the real number
+      total: country.professionals.length,
+      professionals: country.professionals.slice(0, COUNTRY_PANEL_MAX).map((p) => toProfessionalCard(p)),
     });
   }
 
@@ -54,6 +59,7 @@ export async function GET(
     flag: wc.flag,
     latitude: wc.latlng[0],
     longitude: wc.latlng[1],
+    total: 0,
     professionals: [],
   });
 }

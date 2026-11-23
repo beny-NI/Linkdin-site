@@ -72,7 +72,7 @@ export function LinkedInImport({ onResult }: { onResult: (fields: AutofillFields
             aria-label="Pasted LinkedIn profile text"
           />
           <p className="text-[11px] text-muted-foreground">
-            The text is sent to the Anthropic API to be structured. Only use profiles of people who agreed to be featured.
+            The text is sent to your configured AI provider to be structured. Only use profiles of people who agreed to be featured.
           </p>
         </div>
       )}

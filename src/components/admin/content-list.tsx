@@ -48,6 +48,8 @@ interface ContentListProps<T extends BaseRow> {
   paginated?: boolean;
   /** show the Archive tab + archive / restore buttons (professionals, stories) */
   archivable?: boolean;
+  /** extra buttons next to the "New …" button */
+  extraActions?: ReactNode;
 }
 
 export function ContentList<T extends BaseRow>({
@@ -62,6 +64,7 @@ export function ContentList<T extends BaseRow>({
   columns,
   paginated = true,
   archivable = false,
+  extraActions,
 }: ContentListProps<T>) {
   const qc = useQueryClient();
   const { toast } = useToast();
@@ -69,6 +72,8 @@ export function ContentList<T extends BaseRow>({
   const [debounced, setDebounced] = useState("");
   const [status, setStatus] = useState<"all" | "published" | "draft" | "archived">("all");
   const [page, setPage] = useState(1);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [allMatching, setAllMatching] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -82,6 +87,11 @@ export function ContentList<T extends BaseRow>({
   if (debounced) params.set("q", debounced);
   if (status !== "all") params.set("status", status);
   if (paginated) params.set("page", String(page));
+
+  useEffect(() => {
+    setSelected(new Set());
+    setAllMatching(false);
+  }, [debounced, status, page]);
 
   const { data, isLoading, isError, error } = useQuery<ListResponse<T>>({
     queryKey: ["admin", entity, debounced, status, page],
@@ -124,6 +134,44 @@ export function ContentList<T extends BaseRow>({
   });
 
   const rows = data?.items ?? [];
+
+  const bulk = useMutation({
+    mutationFn: (action: "delete" | "publish" | "unpublish" | "archive" | "restore") =>
+      adminFetch<{ done: number; skipped: number }>("/api/admin/bulk", {
+        method: "POST",
+        json: {
+          entity,
+          action,
+          ...(allMatching ? { all: { q: debounced, status } } : { ids: Array.from(selected) }),
+        },
+      }).then((r) => ({ ...r, action })),
+    onSuccess: (r) => {
+      toast({
+        title: `${r.done} ${r.action === "delete" ? "deleted" : r.action === "publish" ? "published" : r.action === "unpublish" ? "unpublished" : r.action === "archive" ? "archived" : "restored"}`,
+        description: r.skipped ? `${r.skipped} skipped (a real portrait photo is required before publishing).` : undefined,
+      });
+      setSelected(new Set());
+      setAllMatching(false);
+      refreshEverything();
+    },
+    onError: (e) => toast({ title: "Bulk action failed", description: e.message, variant: "destructive" }),
+  });
+
+  const pageAllSelected = rows.length > 0 && rows.every((r) => selected.has(r.id));
+  function toggleAll() {
+    setAllMatching(false);
+    setSelected(pageAllSelected ? new Set() : new Set(rows.map((r) => r.id)));
+  }
+  function toggleOne(id: string) {
+    setAllMatching(false);
+    setSelected((cur) => {
+      const next = new Set(cur);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+  const selectedCount = allMatching ? (data?.total ?? 0) : selected.size;
   const totalPages = data?.totalPages ?? 1;
 
   return (
@@ -133,11 +181,14 @@ export function ContentList<T extends BaseRow>({
         title={title}
         description={description}
         actions={
-          <Button asChild size="sm" className="bg-gold-500 text-navy-950 hover:bg-gold-400">
-            <Link href={newHref}>
-              <Plus aria-hidden /> {newLabel}
-            </Link>
-          </Button>
+          <>
+            {extraActions}
+            <Button asChild size="sm" className="bg-gold-500 text-navy-950 hover:bg-gold-400">
+              <Link href={newHref}>
+                <Plus aria-hidden /> {newLabel}
+              </Link>
+            </Button>
+          </>
         }
       />
 
@@ -172,11 +223,66 @@ export function ContentList<T extends BaseRow>({
         {data && <p className="text-xs text-muted-foreground sm:ml-auto">{data.total} total</p>}
       </div>
 
+      {selectedCount > 0 && (
+        <div className="mb-3 flex flex-wrap items-center gap-2 rounded-xl border border-gold-500/50 bg-accent px-4 py-2.5 text-sm">
+          <strong className="text-navy-900">{selectedCount} selected</strong>
+          {!allMatching && pageAllSelected && data && data.total > rows.length && (
+            <button type="button" onClick={() => setAllMatching(true)} className="font-semibold text-gold-600 underline underline-offset-4">
+              Select all {data.total} matching
+            </button>
+          )}
+          <div className="ml-auto flex flex-wrap items-center gap-1.5">
+            {status !== "archived" && (
+              <>
+                <Button size="sm" variant="outline" disabled={bulk.isPending} onClick={() => bulk.mutate("publish")}>
+                  <Eye aria-hidden /> Publish
+                </Button>
+                <Button size="sm" variant="outline" disabled={bulk.isPending} onClick={() => bulk.mutate("unpublish")}>
+                  <EyeOff aria-hidden /> Unpublish
+                </Button>
+              </>
+            )}
+            {archivable && status !== "archived" && (
+              <Button size="sm" variant="outline" disabled={bulk.isPending} onClick={() => bulk.mutate("archive")}>
+                <Archive aria-hidden /> Archive
+              </Button>
+            )}
+            {archivable && status === "archived" && (
+              <Button size="sm" variant="outline" disabled={bulk.isPending} onClick={() => bulk.mutate("restore")}>
+                <ArchiveRestore aria-hidden /> Restore
+              </Button>
+            )}
+            <ConfirmAction
+              title={`Permanently delete ${selectedCount} ${noun}${selectedCount === 1 ? "" : "s"}?`}
+              description="They are removed from the site and the database for good. This cannot be undone."
+              confirmLabel={`Delete ${selectedCount}`}
+              onConfirm={() => bulk.mutate("delete")}
+            >
+              <Button size="sm" variant="outline" disabled={bulk.isPending} className="border-destructive/40 text-destructive hover:text-destructive">
+                <Trash2 aria-hidden /> Delete
+              </Button>
+            </ConfirmAction>
+            <Button size="sm" variant="ghost" onClick={() => { setSelected(new Set()); setAllMatching(false); }}>
+              Clear
+            </Button>
+          </div>
+        </div>
+      )}
+
       <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
         <div className="overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-secondary/50">
+                <TableHead className="w-10">
+                  <input
+                    type="checkbox"
+                    checked={pageAllSelected}
+                    onChange={toggleAll}
+                    aria-label="Select all on this page"
+                    className="h-4 w-4 accent-[#a98847]"
+                  />
+                </TableHead>
                 {columns.map((c) => (
                   <TableHead key={c.header} className={c.className}>
                     {c.header}
@@ -190,21 +296,21 @@ export function ContentList<T extends BaseRow>({
               {isLoading &&
                 Array.from({ length: 5 }).map((_, i) => (
                   <TableRow key={i}>
-                    <TableCell colSpan={columns.length + 2}>
+                    <TableCell colSpan={columns.length + 3}>
                       <Skeleton className="h-10 w-full" />
                     </TableCell>
                   </TableRow>
                 ))}
               {isError && (
                 <TableRow>
-                  <TableCell colSpan={columns.length + 2} className="py-10 text-center text-sm text-destructive">
+                  <TableCell colSpan={columns.length + 3} className="py-10 text-center text-sm text-destructive">
                     {error instanceof Error ? error.message : "Failed to load"}
                   </TableCell>
                 </TableRow>
               )}
               {!isLoading && !isError && rows.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={columns.length + 2} className="py-12 text-center text-sm text-muted-foreground">
+                  <TableCell colSpan={columns.length + 3} className="py-12 text-center text-sm text-muted-foreground">
                     Nothing here yet.{" "}
                     <Link href={newHref} className="font-semibold text-gold-600 underline underline-offset-4">
                       {newLabel}
@@ -213,7 +319,16 @@ export function ContentList<T extends BaseRow>({
                 </TableRow>
               )}
               {rows.map((row) => (
-                <TableRow key={row.id}>
+                <TableRow key={row.id} data-state={selected.has(row.id) || allMatching ? "selected" : undefined}>
+                  <TableCell className="w-10">
+                    <input
+                      type="checkbox"
+                      checked={allMatching || selected.has(row.id)}
+                      onChange={() => toggleOne(row.id)}
+                      aria-label={`Select ${noun}`}
+                      className="h-4 w-4 accent-[#a98847]"
+                    />
+                  </TableCell>
                   {columns.map((c, i) => (
                     <TableCell key={c.header} className={c.className}>
                       {i === 0 && row.homeFeatured ? (

@@ -1,5 +1,8 @@
 "use client";
 
+import Link from "next/link";
+import { FileSpreadsheet, ListChecks } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { ContentList } from "@/components/admin/content-list";
 
 interface Row {
@@ -20,6 +23,20 @@ export default function ProfessionalsAdminPage() {
     <ContentList<Row>
       entity="professionals"
       archivable
+      extraActions={
+        <>
+          <Button asChild variant="outline" size="sm">
+            <Link href="/admin/professionals/review">
+              <ListChecks aria-hidden /> Review drafts
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="sm">
+            <Link href="/admin/import">
+              <FileSpreadsheet aria-hidden /> Import from Excel
+            </Link>
+          </Button>
+        </>
+      }
       title="Professionals"
       description="People shown in Discover, on the globe, in collections and in the homepage hero."
       noun="professional"
